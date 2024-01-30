@@ -14,7 +14,7 @@ provider "yandex" {
   zone = "ru-central1-a"
 }
 
-resource "yandex_compute_instance" "default" {
+resource "yandex_compute_instance" "build_node" {
   name = "new1"
   allow_stopping_for_update = true
   resources {
@@ -44,13 +44,12 @@ resource "yandex_compute_instance" "default" {
     inline = [
       "sudo apt update", 
       "sudo apt install mc -y",
-      "sudo apt install tomcat9 -y",
-      "sudo apt install docker.io -y",
+      "sudo apt install ansible -y",
     ]
   }
 }
 
-resource "yandex_compute_instance" "additional" {
+resource "yandex_compute_instance" "app_node" {
   name = "new2"  
   allow_stopping_for_update = true
   resources {
@@ -80,9 +79,7 @@ resource "yandex_compute_instance" "additional" {
     inline = [
       "sudo apt update", 
       "sudo apt install mc -y",
-      "sudo apt install tomcat9 -y",
-      "sudo apt install docker.io -y",
-    ]
+      ]
   }
 }
 
@@ -90,9 +87,15 @@ data "yandex_compute_image" "ubuntu_image" {
   family = "ubuntu-2004-lts"
 }
 
-resource "yandex_compute_disk" "ubuntu2004_15GB" {
+resource "yandex_compute_disk" "build_node_ubuntu2004_15GB" {
   type     = "network-ssd"
   zone     = "ru-central1-a"
   image_id = data.yandex_compute_image.ubuntu_image.id
   size     = 15
 }
+ resource "yandex_compute_disk" "app_node_ubuntu2004_15GB" {
+  type     = "network-ssd"
+  zone     = "ru-central1-a"
+  image_id = data.yandex_compute_image.ubuntu_image.id
+  size = 15
+ }
